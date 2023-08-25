@@ -8,4 +8,6 @@ cd ./Login_Backend/npm install
 ```sh
  cd ./Login_Backend/npm run dev
 ```
-## :test: Build
+## :runner: Test
+- <a href="https://www.postman.com/">Postman</a>
+- Swagger
