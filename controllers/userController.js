@@ -3,23 +3,23 @@ const User = require('../models/userModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const registerUser = asyncHandler(async(req, res)=>{
-    const {username, email, password} = req.body;
-    if(!username || !email || !password) {
+const registerUser = asyncHandler(async (req, res) => {
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
         res.status(400);
         throw new Error("All fields are mandatory!");
     }
-    const OldUser = await User.findOne({email});
-    if(OldUser) {
+    const OldUser = await User.findOne({ email });
+    if (OldUser) {
         res.status(400);
         throw new Error("User already registed!");
     }
     const newUser = await User.create({
         username,
         email,
-        password : await bcrypt.hash(password, 10)
+        password: await bcrypt.hash(password, 10)
     })
-    if(!newUser) {
+    if (!newUser) {
         res.status(400);
         throw new Error("User data not valid");
     }
@@ -29,33 +29,33 @@ const registerUser = asyncHandler(async(req, res)=>{
     });
 });
 
-const loginUser = asyncHandler(async(req, res) => {
+const loginUser = asyncHandler(async (req, res) => {
     const { email, password } = req.body;
-    if(!email || !password) {
+    if (!email || !password) {
         res.status(400);
         throw new Error("All fileds are mandatory!");
     }
-    const user = await User.findOne({email});
-    if(user && await bcrypt.compare(password, user.password)) {
+    const user = await User.findOne({ email });
+    if (user && await bcrypt.compare(password, user.password)) {
         const accessToken = jwt.sign({
-            user : {
+            user: {
                 username: user.username,
                 email: user.email,
                 id: user.id
             }
         },
-        process.env.ACCESS_TOKEN_SECRET,
-        {expiresIn: '100m'}
+            process.env.ACCESS_TOKEN_SECRET,
+            { expiresIn: '100m' }
         )
-        res.status(200).json({accessToken});
+        res.status(200).json({ accessToken });
     } else {
-        res.status(401);    
+        res.status(401);
         throw new Error("email or password is not valid");
     }
-    res.json({message: "Login user"})
+    res.json({ message: "Login user" })
 });
 
-const currentUser = asyncHandler(async(req, res)=>{
+const currentUser = asyncHandler(async (req, res) => {
     res.json(req.user);
 });
 
